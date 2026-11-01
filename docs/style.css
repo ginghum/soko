@@ -33,3 +33,5 @@
 @media(max-height:650px){.title-copy{top:45%;transform:translateY(-45%)}.title-copy h1{font-size:54px}.title-copy .title-desc{margin:14px 0}.title-copy .title-meta{margin-top:12px}.title-copy>button{padding:10px 15px}.title-copy #titleSaveInfo{margin:6px 0}}
 .name-label{display:flex;flex-direction:column;gap:9px;color:#dddecf;margin:20px 0}.name-label input{width:100%;padding:12px;background:#10242b;color:#f1ead9;border:1px solid #8ba7a7;border-radius:5px;font:inherit;min-height:44px}#expCount{color:#c7d8fb;border-color:#647a9c}.mode-card{min-height:90px}
 @media(max-width:650px){.dock-actions{gap:4px}.dock-actions button{padding-left:7px;padding-right:7px}#expCount{font-size:10px;white-space:nowrap}.name-label{margin:14px 0}}
+
+.monster-portrait{display:block;float:left;width:80px;height:80px;margin:0 14px 4px 0;background-size:400% 400%;background-repeat:no-repeat;image-rendering:pixelated}.list-row:has(.monster-portrait){min-height:104px}.list-row:has(.monster-portrait)>div{width:100%}

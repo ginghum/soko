@@ -568,7 +568,7 @@ hud=function(){ascentHud();{const e=enemies.find(e=>(e.bossId||e.towerElite)&&e.
 const ascentItemName=itemName;
 itemName=id=>ARMOR.find(a=>a.id===id)?.name||ascentItemName(id);
 const ascentDrawTown=drawTown;
-drawTown=function(){ascentDrawTown();if(state.counts.sewerRescue){sprite('npcs',8,4,4,14*TILE+24,13*TILE+31,70,70);ctx.fillStyle='#7ba279';ctx.fillRect(14*TILE+12,13*TILE-32,24,8);}if(state.forgeUnlocked){ctx.fillStyle='#cfac68';ctx.fillRect(8*TILE+10,9*TILE-4,30,5);}};
+drawTown=function(){ascentDrawTown();if(state.counts.sewerRescue){sprite('silver-cast',8,4,4,14*TILE+24,13*TILE+31,76,76);ctx.fillStyle='#7ba279';ctx.fillRect(14*TILE+12,13*TILE-32,24,8);}if(state.forgeUnlocked){ctx.fillStyle='#cfac68';ctx.fillRect(8*TILE+10,9*TILE-4,30,5);}};
 
 // ASCENT END
 // CAMPAIGN START
@@ -738,6 +738,31 @@ action=function(raw){const [a,id]=raw.split(':');if(a==='expUse')return useCryst
 };
 
 // DISCOVERY END
+// CHARACTERS START
+// Dedicated character atlases. Row order is shared with ART_ASSETS.md.
+const CHARACTER_ART={
+ 8:['sewer-cast',0,82],9:['sewer-cast',1,80],10:['sewer-cast',2,86],11:['sewer-cast',3,82],
+ 12:['depths-cast',0,86],13:['depths-cast',1,88],14:['depths-cast',2,148],15:['depths-cast',3,144],
+ 16:['tower-cast',0,152],17:['tower-cast',1,132],18:['tower-cast',2,136],19:['tower-cast',3,148],
+ 20:['silver-cast',0,64]
+};
+const characterDrawEnemy=drawEnemy;
+drawEnemy=function(e){const spec=CHARACTER_ART[e.type];if(!spec)return characterDrawEnemy(e);const [sheet,row,size]=spec,boss=e.type>=14&&e.type<=19;
+ shadow(e.x,e.y,boss?34:e.type===20?15:20);
+ if(e.secondForm){ctx.save();ctx.strokeStyle='#c296cc99';ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(e.x,e.y+2,38,13,0,0,TAU);ctx.stroke();ctx.restore();}
+ const frame=e.hurt>0?3:e.type===20?(e.metalSeen?(e.metalLife<15?2:1):0):e.wind>0?1:e.cool>e.ct-.25?2:0;
+ sprite(sheet,row*4+frame,4,4,e.x,e.y+8+Math.sin(clock*5+e.seed)*1.2,size,size,e.hurt>0?.72:1);
+ if(!boss&&(e.type===20||e.hp<e.maxHp)){ctx.fillStyle='#081319';ctx.fillRect(e.x-21,e.y-size*.8,42,4);ctx.fillStyle=e.type===20?'#d8eef3':'#b6bc74';ctx.fillRect(e.x-21,e.y-size*.8,42*clamp(e.hp/e.maxHp,0,1),4);}
+};
+const characterDrawObject=drawObject;
+drawObject=function(o){const row={rescue:1,sewerRescue:2,trader:3}[o.type];if(row===undefined)return characterDrawObject(o);shadow(o.x,o.y,17);sprite('silver-cast',row*4+(o.done?0:o.type==='trader'?0:3),4,4,o.x,o.y+7,80,80,o.done?.6:1);if(!o.done){ctx.fillStyle='#e7c985';ctx.fillRect(o.x-3,o.y-64,6,6);}};
+const characterDrawTown=drawTown;
+drawTown=function(){characterDrawTown();if(state.counts.rescue){shadow(20*TILE+24,13*TILE+24,17);sprite('silver-cast',4,4,4,20*TILE+24,13*TILE+31,76,76);}};
+function characterPortrait(type){const a=CHARACTER_ART[type];return a?'<span class="monster-portrait" role="img" aria-label="'+ENEMY_NAMES[type]+'" style="background-image:url(assets/'+a[0]+'.webp);background-position:0 '+a[1]*100/3+'%"></span>':'';}
+const characterRenderModal=renderModal;
+renderModal=function(){characterRenderModal();if(modal==='codex'){let html=$('modalBody').innerHTML;ENEMY_NAMES.forEach((name,i)=>{const portrait=characterPortrait(i);if(portrait)html=html.replace('<b>'+(state.book[i]?'◆':'◇')+' '+name+'</b>',portrait+'<b>'+(state.book[i]?'◆':'◇')+' '+name+'</b>');});$('modalBody').innerHTML=html;}};
+
+// CHARACTERS END
 function frame(t){const dt=Math.min((t-last)/1000,.04);last=t;if(running&&loaded&&!modal&&!document.hidden)update(dt);if(running&&loaded)draw();requestAnimationFrame(frame)}
 document.addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();if(k==='tab'&&modal){const els=[...$('modal').querySelectorAll('button:not([disabled]):not([hidden]),summary')];if(!els.length)return;if(e.shiftKey&&document.activeElement===els[0]){e.preventDefault();els.at(-1).focus();}else if(!e.shiftKey&&document.activeElement===els.at(-1)){e.preventDefault();els[0].focus();}return;}if(k==='escape'&&modal){closeModal();return;}if(!running||!loaded)return;if(e.repeat)return;if(k==='escape'){if(modal)closeModal();else openModal('journal');return;}if(modal){if(k===' '&&modal==='commands')closeModal();return;}keys.add(k);if(k==='shift')dodge();if(k==='e')interact();if(k===' ')openModal('commands');if(k==='i')openModal('equipment');if(k==='c'&&floor)stealth=!stealth;});
 document.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));window.addEventListener('blur',()=>{keys.clear();joystick.x=joystick.y=0;if(running&&floor&&!modal)openModal('journal');});document.addEventListener('visibilitychange',()=>{if(document.hidden){keys.clear();joystick.x=joystick.y=0;if(running&&floor&&!modal)openModal('journal');}});
@@ -749,7 +774,7 @@ let stickId=null;const stick=$('joystick');function stickMove(e){if(e.pointerId!
 stick.onpointerdown=e=>{e.preventDefault();stickId=e.pointerId;stick.setPointerCapture(e.pointerId);stickMove(e)};stick.onpointermove=stickMove;function release(){stickId=null;joystick.x=joystick.y=0;stick.firstElementChild.style.transform='';}stick.onpointerup=release;stick.onpointercancel=release;stick.onlostpointercapture=release;
 function start(continued){if(!loaded)return;if(continued)state=readSave()||fresh();else if(readSave()){state=readSave();}else state=fresh();enterTown(true);running=true;$('titleScreen').hidden=true;save();announce('灯守りの街');toast('街の施設から準備し、迷宮か狩場へ。操作は右上の「遊び方」で確認できます。');}
 setupCampaignTitle();
-Promise.all(['hero','combat','enemies','npcs','terrain','props','items','effects','title','newenemies','weapons-extra','heroine'].map(name=>new Promise((resolve,reject)=>{const img=new Image();img.onload=resolve;img.onerror=()=>reject(name);img.src='assets/'+name+'.webp';art[name]=img}))).then(()=>{loaded=true;$('loading').hidden=true;resize();refreshCampaignTitle();}).catch(name=>{$('loading').innerHTML='画像を読み込めませんでした。<span>ページを再読み込みしてください：'+name+'</span>';$('titleScreen').hidden=true;});
+Promise.all(['hero','combat','enemies','npcs','terrain','props','items','effects','title','newenemies','weapons-extra','heroine','sewer-cast','depths-cast','tower-cast','silver-cast'].map(name=>new Promise((resolve,reject)=>{const img=new Image();img.onload=resolve;img.onerror=()=>reject(name);img.src='assets/'+name+'.webp';art[name]=img}))).then(()=>{loaded=true;$('loading').hidden=true;resize();refreshCampaignTitle();}).catch(name=>{$('loading').innerHTML='画像を読み込めませんでした。<span>ページを再読み込みしてください：'+name+'</span>';$('titleScreen').hidden=true;});
 requestAnimationFrame(frame);
 // Read-only diagnostic snapshot for headless logic tests.
 window.emberSnapshot=()=>({loaded,running,modal,floor,hunt:hunt&&{...hunt},player:player&&{x:Math.round(player.x),y:Math.round(player.y),hp:Math.ceil(player.hp),mp:Math.floor(player.mp)},state:state&&JSON.parse(JSON.stringify(state)),enemies:enemies.filter(e=>e.hp>0).length,enemyDetails:enemies.filter(e=>e.hp>0).map(e=>({type:e.type,x:e.x,y:e.y,hp:e.hp})),objects:objects.map(o=>({type:o.type,x:o.x,y:o.y,opened:o.opened})),stats:state&&stats()});

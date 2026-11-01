@@ -193,4 +193,4 @@ hud=function(){ascentHud();{const e=enemies.find(e=>(e.bossId||e.towerElite)&&e.
 const ascentItemName=itemName;
 itemName=id=>ARMOR.find(a=>a.id===id)?.name||ascentItemName(id);
 const ascentDrawTown=drawTown;
-drawTown=function(){ascentDrawTown();if(state.counts.sewerRescue){sprite('npcs',8,4,4,14*TILE+24,13*TILE+31,70,70);ctx.fillStyle='#7ba279';ctx.fillRect(14*TILE+12,13*TILE-32,24,8);}if(state.forgeUnlocked){ctx.fillStyle='#cfac68';ctx.fillRect(8*TILE+10,9*TILE-4,30,5);}};
+drawTown=function(){ascentDrawTown();if(state.counts.sewerRescue){sprite('silver-cast',8,4,4,14*TILE+24,13*TILE+31,76,76);ctx.fillStyle='#7ba279';ctx.fillRect(14*TILE+12,13*TILE-32,24,8);}if(state.forgeUnlocked){ctx.fillStyle='#cfac68';ctx.fillRect(8*TILE+10,9*TILE-4,30,5);}};
