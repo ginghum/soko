@@ -56,7 +56,7 @@ enterRegion=function(id,n=1,mutated=false,arena=false){const before=world;discov
 const discoveryWave=spawnHuntWave;
 spawnHuntWave=function(){discoveryWave();spawnSilver(.18,true);};
 const discoveryHurt=hurtEnemy;
-hurtEnemy=function(e,amount,back=false){if(e.hp<=0)return;if(e.type===20){if(castingMagic){fx(e.x,e.y,'ice',.35);return;}const damage=Math.random()<.1?3:1;e.hp-=damage;e.hurt=.18;e.metalSeen=true;if(e.hp<=0){state.gold+=e.gold;state.materials.ore+=2;state.book[20]=(state.book[20]||0)+1;if(hunt){state.huntKills++;state.counts.hunters++;}awardCrystal(100);save();toast('銀灯スライムを倒した！ 銀灯の大結晶（EXP1200）を入手。');}return;}
+hurtEnemy=function(e,amount,back=false){if(e.hp<=0)return;if(e.type===20){if(castingMagic){fx(e.x,e.y,'ice',.35);return;}const damage=Math.random()<.1?3:1;e.hp-=damage;e.hurt=.18;e.metalSeen=true;if(e.hp<=0){state.gold+=e.gold;state.materials.ore+=2;state.book[20]=(state.book[20]||0)+1;if(hunt){state.huntKills++;state.counts.hunters++;}if(Math.random()<EQUIPMENT_DROP_RATE)rollLoot(false);awardCrystal(100);save();toast('銀灯スライムを倒した！ 銀灯の大結晶（EXP1200）を入手。');}return;}
  const alive=e.hp>0;discoveryHurt(e,amount,back);if(alive&&e.hp<=0){if(e.bossId)awardCrystal(20);else{state.expDry++;if(Math.random()<.35||state.expDry>=8){state.expDry=0;const unit=5+Math.floor(Math.random()*16);awardCrystal(unit);toast('灯の経験結晶を入手！ スライム'+unit+'体分のEXP。');}}save();}
 };
 const discoveryUpdate=update;
