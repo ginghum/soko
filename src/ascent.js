@@ -118,7 +118,7 @@ const ascentTown=enterTown;
 enterTown=function(initial=false){tower=null;ascentTown(initial);player.hazardTime=0;};
 function floorRecovery(){if(player.hp<=0)return;player.hp=Math.min(stats().hp,player.hp+Math.round(stats().hp*.25));player.mp=Math.min(stats().mp,player.mp+10);player.poison=0;toast('階層を進んだ：HP25%・MP10回復、毒を解除。');}
 const ascentDungeon=enterDungeon;
-enterDungeon=function(n){if(!Number.isInteger(n)||n<1||n>3)return;tower=null;const previous=floor;ascentDungeon(n);if(n===1){for(const e of enemies)if([5,6,7].includes(e.type))Object.assign(e,{type:0,hp:43,maxHp:43,atk:13,speed:43,range:54,ct:2.1,xp:12,gold:9});}if(n>1&&previous>0)floorRecovery();};
+enterDungeon=function(n){if(!Number.isInteger(n)||n<1||n>3)return;tower=null;const previous=floor;ascentDungeon(n);if(n===1){for(const e of enemies)if([5,6,7].includes(e.type))Object.assign(e,{type:0,hp:43*enemyFactor(),maxHp:43*enemyFactor(),atk:13*enemyFactor(),speed:43,range:54,ct:2.1,xp:12,gold:9});}if(n>1&&previous>0)floorRecovery();};
 const ascentRegion=enterRegion;
 enterRegion=function(id,n=1,mutated=false,arena=false){if(id==='tower')return;if(!REGIONS[id]||!regionUnlocked(id)||n<1||n>REGIONS[id].floors)return;tower=null;const previous=floor;ascentRegion(id,n,mutated,arena);if(n===REGIONS[id].floors&&!arena)enemies=enemies.filter(e=>e.bossId||e.x<26*TILE);if(n>1&&previous>0&&!arena)floorRecovery();player.hazardTime=0;};
 const ascentHunt=enterHunt;
