@@ -25,8 +25,8 @@ const boot=require('./game.test.cjs'),assert=require('node:assert/strict');
  g.act('open:gacha');s.tickets=1;const shards=s.gachaShards;g.act('gacha:10');assert.equal(s.gachaShards,shards);g.act('gacha:1');assert.equal(s.gachaShards,shards+1);s.gachaShards=15;g.act('shardAcc:watcherSeal');assert.equal(s.gachaShards,15);g.act('shardAcc:fortune');assert.equal(s.gachaShards,0);assert.ok(s.accessories.includes('fortune'));
  // Damage cap and potion scaling are enforced in real combat code.
  g.act('enter:1');p=g.api.player();p.hp=g.snap().stats.hp;p.inv=0;const hp=p.hp;g.api.hitPlayer(10000);assert.ok(hp-p.hp<=Math.round(hp*.22));p.poison=3;const pots=s.potions;g.api.potion('hp');assert.equal(p.poison,0);assert.equal(s.potions,pots-1);
- // Only two windups may overlap; all bosses expose second-phase state.
- g.api.clear();for(let i=0;i<3;i++)g.api.enemy(0,(p.x+30+i*5-24)/48,(p.y-24)/48);for(const e of g.api.enemies()){e.cool=0;e.alert=10;}g.api.update(.04);assert.equal(g.api.enemies().filter(e=>e.wind>0).length,2);
+ // Only three windups may overlap; all bosses expose second-phase state.
+ g.api.clear();for(let i=0;i<3;i++)g.api.enemy(0,(p.x+30+i*5-24)/48,(p.y-24)/48);for(const e of g.api.enemies()){e.cool=0;e.alert=10;}g.api.update(.04);assert.equal(g.api.enemies().filter(e=>e.wind>0).length,3);
  g.api.clear();g.api.enemy(14,6,6);const hydra=g.api.enemies()[0];hydra.bossId='hydra';g.api.hurtEnemy(hydra,hydra.maxHp*.55);assert.ok(hydra.secondForm);g.api.beginWindup(hydra,0);assert.equal(hydra.aims.length,3);
  g.api.clear();g.api.enemy(16,6,6);const phoenix=g.api.enemies()[0];phoenix.bossId='phoenix';const kills=s.bossKills.phoenix;g.api.hurtEnemy(phoenix,100000);assert.ok(phoenix.hp>0&&phoenix.reborn);assert.equal(s.bossKills.phoenix,kills);g.api.hurtEnemy(phoenix,100000);assert.equal(s.bossKills.phoenix,kills+1,'revive grants exactly one kill reward');g.act('town');
  // Backup roundtrip, confirmation, cancellation, invalid data and undo.

@@ -32,3 +32,22 @@ Asset type: production pixel art RPG character sprite atlas, transparent backgro
 - Depths: corroded bronze-armored soldier with moss-green surcoat, dented shield and rusty sword; blue-green coiled water snake with pale belly and fin crest; swamp-green hydra with exactly three heads, long necks and purple venom teeth; ice golem monarch with jagged cyan crown, navy stone torso, cyan heart, crystal maul and icicle cape.
 - Tower: charcoal and red-orange phoenix with gold beak and ash crown; faceless silver knight with reflective triangular shield, glasslike sword and navy cloak; elderly spectral librarian with crescent indigo hat, beard, gold stars, open book and brass astrolabe staff; skeletal king in purple-black torn robes, broken ivory antler crown, empty hood with violet light, hollow chest lantern and bone scepter.
 - Silver/NPCs: silver-blue mercury slime with white highlight, navy eyes and gold lantern core (idle/alert/escape/hurt); chestnut-braided herbalist in cream scarf and burgundy dress with herb satchel; gray-haired alchemist with brass goggles, moss-green coat, dark apron, amber flask and medical bag; older moustached trader in ochre turban and teal patched coat with framed backpack, scrolls, copper pots and walking stick (NPC poses idle/walking/work/rest).
+
+# 全32種の武器専用画像
+
+組み込み image_gen で2枚を生成し、`docs/assets/weapons-a.webp`・`docs/assets/weapons-b.webp`へ保存。768×768、4列×4行の透過WebP。`src/challenge.js` の武器定義順（WEAPONS）と同じ順に対応させ、店・装備・戦利品・画面下の装備アイコンと手持ちの描画に利用する。ランダム戦利品は元の武器の意匠を引き継ぐ。
+
+共通プロンプト：Production RPG item icon atlas, one square transparent image, exact four columns by four rows, sixteen distinct weapons, one equipment item per cell. Crisp detailed 32-bit dark fantasy pixel art, handcrafted metal/wood/leather/gems, diagonal lower-left grip to upper-right blade, generous transparent padding, silhouettes readable at64px, no text/grid/borders/scenery/hands or effects crossing cells. True transparency.
+
+| アトラス | 行 | 左→右の武器と意匠 |
+|---|---:|---|
+| weapons-a | 1 | 旅人の剣（鉄・革）／影縫い（黒鋼・三日月）／灯守りの槍（琥珀の灯）／鋼の長剣（青い柄） |
+| weapons-a | 2 | 狩人の弓（木と緑弦）／氷晶の杖（青水晶）／裂風の戦斧（銀と緑の双月刃）／震地の戦槌（石と真鍮） |
+| weapons-a | 3 | 貫鉄の弩（鉄製機構と胡桃材）／毒牙（緑の牙）／古灯の剣（青銅と琥珀の溝）／水路の曲刀（腐食金属と翡翠） |
+| weapons-a | 4 | 葦鳴り（竹と葦）／胞子（捻れ木と青緑キノコ）／鎖刃（銅鎖と黒鉄）／黎明（黄金の太陽鍔） |
+| weapons-b | 1 | 淵蛇の双牙（緑の対短剣）／絶氷（氷冠の槍）／不死灰（鳳凰の羽と火球）／淵蛇の継承（象牙と鱗） |
+| weapons-b | 2 | 氷王の継承（幾何学の氷槍）／不死灰の継承（黒木と火晶）／灯守りの継承（灯籠鍔）／鏡刃・残月（鏡の月刃） |
+| weapons-b | 3 | 星綴り（天球儀と星）／虚灯（角と紫の空洞）／銀風（銀細工の護拳）／梟羽（羽根の長弓） |
+| weapons-b | 4 | 嵐呼び（雷叉と青晶）／紅晶（紅玉と黒鉄）／暁鐘（鐘型の槌と舌）／月霜（月形の大剣と霜） |
+
+生成後は `python scripts/prepare-character-atlases.py --weapons input-a.png input-b.png` で各セルの透過余白とサイズをそろえる。

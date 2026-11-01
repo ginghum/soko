@@ -8,9 +8,12 @@ import numpy as np
 from PIL import Image
 
 root = Path(__file__).resolve().parent.parent
-names = ['sewer-cast', 'depths-cast', 'tower-cast', 'silver-cast']
-assert len(sys.argv) == 5, 'Provide the four source PNGs in sewer/depths/tower/silver order'
-for name, source in zip(names, sys.argv[1:]):
+sources = sys.argv[1:]
+weapons = bool(sources and sources[0] == '--weapons')
+if weapons: sources = sources[1:]
+names = ['weapons-a', 'weapons-b'] if weapons else ['sewer-cast', 'depths-cast', 'tower-cast', 'silver-cast']
+assert len(sources) == len(names), 'Provide two weapon atlases with --weapons, or four character atlases'
+for name, source in zip(names, sources):
     image = Image.open(source).convert('RGBA')
     pixels = np.array(image)
     pixels[pixels[:, :, 3] <= 32] = 0
@@ -39,6 +42,7 @@ for name, source in zip(names, sys.argv[1:]):
             cells.append(cell.crop(box))
         scale = min(164/max(c.width for c in cells), 164/max(c.height for c in cells))
         for col, cell in enumerate(cells):
+            if weapons: scale = min(164/cell.width, 164/cell.height)
             cell = cell.resize((max(1, round(cell.width*scale)), max(1, round(cell.height*scale))), Image.Resampling.NEAREST)
             atlas.alpha_composite(cell, (col*192+(192-cell.width)//2, row*192+176-cell.height))
     target = root/'docs/assets'/f'{name}.webp'

@@ -35,3 +35,5 @@
 @media(max-width:650px){.dock-actions{gap:4px}.dock-actions button{padding-left:7px;padding-right:7px}#expCount{font-size:10px;white-space:nowrap}.name-label{margin:14px 0}}
 
 .monster-portrait{display:block;float:left;width:80px;height:80px;margin:0 14px 4px 0;background-size:400% 400%;background-repeat:no-repeat;image-rendering:pixelated}.list-row:has(.monster-portrait){min-height:104px}.list-row:has(.monster-portrait)>div{width:100%}
+
+.keyboard-choice{outline:3px solid #f1cf86!important;outline-offset:4px;box-shadow:0 0 15px #e3b85255}.weapon-art{width:64px;height:64px;flex-shrink:0;image-rendering:pixelated}

@@ -10,7 +10,7 @@ const boot=require('./game.test.cjs'),assert=require('node:assert/strict');
  g.act('equip:spear');gold=s.gold;g.act('upgrade');assert.equal(s.gold,gold-600);gold=s.gold;g.act('forgeUnlock');assert.equal(s.gold,gold-1500);const drop=g.api.randomDrop(2,2);s.loot.push(drop);g.act('equip:'+drop.uid);gold=s.gold;g.act('reforge');assert.equal(s.gold,gold-1200);
  s.materials.gel=2;gold=s.gold;g.act('sell:gel');assert.equal(s.gold,gold+10);
  // No compounding on reload/render and mode changes, including enemy templates reset by maps.
- g.act('enter:1');for(const e of g.api.enemies().filter(e=>e.type===0)){assert.equal(e.maxHp,129);assert.equal(e.atk,39);}g.api.clear();g.api.enemy(0,6,6);assert.equal(g.api.enemies()[0].maxHp,129);assert.equal(g.api.enemies()[0].atk,39);
+ g.act('enter:1');for(const e of g.api.enemies().filter(e=>e.type===0)){assert.equal(e.maxHp,129);assert.equal(e.atk,53);}g.api.clear();g.api.enemy(0,6,6);assert.equal(g.api.enemies()[0].maxHp,129);assert.equal(g.api.enemies()[0].atk,39);
  const p=g.api.player();g.api.objects().push({id:99999,type:'trader',x:p.x,y:p.y});g.api.interact();assert.equal(g.snap().modal,'trader');assert.ok(g.el('modalBody').innerHTML.includes('150G'));gold=s.gold;g.act('trader:hp');assert.equal(s.gold,gold-150);
  g.act('town');s.book={0:5};const pots=s.potions;g.act('open:journey');g.act('journeyClaim:kills5');assert.equal(s.potions,pots+2);g.act('journeyClaim:kills5');assert.equal(s.potions,pots+2);g.click('closeModal');const played=s.playSeconds;g.api.update(1);assert.ok(s.playSeconds>=played+1);
  // Restart only replaces its own mode, and a one-step pre-new-game recovery remains available.

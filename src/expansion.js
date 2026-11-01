@@ -1,10 +1,10 @@
 // Content expansion. Compiled into the game closure by scripts/build-expansion.py.
 let region='ruins', variant=false, expeditionPower=0, dodgePower=0, lastRewards=[], trader=null;
 const REGIONS={
- ruins:{name:'古灯の迷宮',floors:3,level:1,boss:'guardian',color:'#557b71'},
- sewer:{name:'毒沼の地下水路',floors:5,level:3,boss:'hydra',color:'#638f50'},
- frost:{name:'凍結した鉱山',floors:4,level:9,boss:'frost',color:'#68afc4'},
- shrine:{name:'灼熱の廃神殿',floors:4,level:15,boss:'phoenix',color:'#c18053'}
+ ruins:{name:'古灯の迷宮',floors:6,level:1,boss:'guardian',color:'#557b71'},
+ sewer:{name:'毒沼の地下水路',floors:8,level:3,boss:'hydra',color:'#638f50'},
+ frost:{name:'凍結した鉱山',floors:7,level:9,boss:'frost',color:'#68afc4'},
+ shrine:{name:'灼熱の廃神殿',floors:7,level:15,boss:'phoenix',color:'#c18053'}
 };
 const TRAITS={edge:['研刃','攻撃力+8%'],vigor:['生命','最大HP+25'],guard:['堅守','防御+3'],flow:['速撃','通常攻撃の間隔-10%'],leech:['吸命','武器命中時HP2回復'],evade:['返し刃','回避後3秒以内の次の通常攻撃+50%'],execution:['処刑','HP30%以下の敵への武器ダメージ+25%'],fury:['窮地','HP35%未満で武器ダメージ+25%'],poison:['毒牙','武器命中で4秒間、毎秒6の毒'],frost:['冷気','武器命中で2秒間敵を鈍足にする'],chain:['伝染','毒状態の敵を倒すと周囲100にも毒'],harvest:['収穫','通常素材を追加で1個獲得'],scholar:['探究','敵からの経験値+15%'],luck:['幸運','通常敵のガチャ券率+6ポイント'],arcane:['魔導','魔法威力+20%']};
 const MORE_WEAPONS=[
@@ -34,7 +34,7 @@ const BOSSES={
 };
 const ENEMY_NAMES=['スライム','コウモリ','骸骨兵','古き灯の守護者','毒蜘蛛','骸骨弓兵','火霊','鎧甲虫','汚泥スライム','排水路の大鼠','管棲みの毒蟲','歩く胞子茸','錆鎧の水路兵','水蛇','毒淵の三頭蛇','凍鉱の氷王','灰冠の不死鳥'];
 const MORE_QUESTS=[
- ['sewerMaterials','濁った水の行方','地下水路で素材を30個集める',30,350,170],['rats','水路の齧り手','排水路の大鼠を8体倒す',8,220,100],['worms','管の奥の気配','管棲みの毒蟲を6体倒す',6,240,110],['spores','胞子の採集','歩く胞子茸を6体倒す',6,260,120],['serpents','水面の牙','水蛇を4体倒す',4,300,140],['sewerRescue','調合師の帰り道','地下水路4階で調合師を救出する',1,400,220],['hydra','水源を取り戻せ','地下水路5階の三頭蛇を倒す',1,600,300],['specialRooms','寄り道の心得','特殊部屋の宝物庫を3回開ける',3,300,150]
+ ['sewerMaterials','濁った水の行方','地下水路で素材を30個集める',30,350,170],['rats','水路の齧り手','排水路の大鼠を8体倒す',8,220,100],['worms','管の奥の気配','管棲みの毒蟲を6体倒す',6,240,110],['spores','胞子の採集','歩く胞子茸を6体倒す',6,260,120],['serpents','水面の牙','水蛇を4体倒す',4,300,140],['sewerRescue','調合師の帰り道','地下水路4階で調合師を救出する',1,400,220],['hydra','水源を取り戻せ','地下水路8階の三頭蛇を倒す',1,600,300],['specialRooms','寄り道の心得','特殊部屋の宝物庫を3回開ける',3,300,150]
 ];
 MORE_QUESTS.forEach(([id,name,text,target,gold,xp])=>QUESTS.push({id,name,text,target,gold,xp}));
 const oldFresh=fresh;
@@ -48,7 +48,7 @@ stats=function(){const s=oldStats(),a=equippedAccessories(),t=traits();s.hp+=a.r
 const oldTown=enterTown;
 enterTown=function(initial=false){region='ruins';variant=false;expeditionPower=0;dodgePower=0;trader=null;oldTown(initial);};
 const oldEnterDungeon=enterDungeon;
-enterDungeon=function(n){if(!Number.isInteger(n)||n<1||n>3)return;region='ruins';variant=false;oldEnterDungeon(n);const b=enemies.find(e=>e.type===3);if(b)b.bossId='guardian';updateLocation();};
+enterDungeon=function(n){if(!Number.isInteger(n)||n<1||n>6)return;region='ruins';variant=false;oldEnterDungeon(n);const b=enemies.find(e=>e.type===3);if(b)b.bossId='guardian';updateLocation();};
 const oldEnemy=enemy;
 enemy=function(type,x,y){if(type<8)return oldEnemy(type,x,y);oldEnemy(0,x,y);const e=enemies.at(-1),defs=[
  [80,17,43,68,2,24],[62,19,100,130,2.5,25],[100,22,35,225,2.8,29],[90,19,32,170,3,30],[170,28,42,88,2.7,38],[112,24,62,230,2.5,36],[1150,33,35,210,2.8,300],[1850,43,42,250,2.7,450],[2700,55,56,270,2.4,650]
@@ -67,10 +67,10 @@ function enterRegion(id,n=1,mutated=false,arena=false){const r=REGIONS[id];if(!r
  if(id==='sewer'&&n===4)obj('sewerRescue',29,6,{done:!!state.counts.sewerRescue});
  }
  if(n===r.floors){enemy(BOSSES[r.boss].type,29,19);const e=enemies.at(-1);e.bossId=r.boss;e.mutated=mutated;if(arena){e.x=17*TILE+24;e.y=7*TILE+24;e.alert=999;}if(mutated){e.hp=e.maxHp=Math.round(e.hp*1.8);e.atk=Math.round(e.atk*1.4);e.speed*=1.15;e.xp*=2;}}
- player.inv=2;player.poison=0;trader=null;updateLocation();closeModal();announce(r.name+' 地下'+n+'階'+(mutated?'・変異種':''));save();
+ player.inv=2;trader=null;updateLocation();closeModal();announce(r.name+' 地下'+n+'階'+(mutated?'・変異種':''));save();
 }
 function enterBoss(id,mutated){const b=BOSSES[id];if(!b||!(state.bossKills[id]>0))return;if(id==='guardian'){
- enterDungeon(3);world=makeWorld();room(7,4,21,19);objects=[];obj('exit',17,21);enemies=[];enemy(3,17,7);const e=enemies[0];e.bossId=id;e.mutated=mutated;e.alert=999;if(mutated){e.hp=e.maxHp=Math.round(e.hp*1.8);e.atk=Math.round(e.atk*1.4);e.speed*=1.15;}player.x=17*TILE+24;player.y=18*TILE+24;player.inv=2;variant=mutated;updateLocation();
+ enterDungeon(REGIONS.ruins.floors);world=makeWorld();room(7,4,21,19);objects=[];obj('exit',17,21);enemies=[];enemy(3,17,7);const e=enemies[0];e.bossId=id;e.mutated=mutated;e.alert=999;if(mutated){e.hp=e.maxHp=Math.round(e.hp*1.8);e.atk=Math.round(e.atk*1.4);e.speed*=1.15;}player.x=17*TILE+24;player.y=18*TILE+24;player.inv=2;variant=mutated;updateLocation();
  }else enterRegion(b.region,REGIONS[b.region].floors,mutated,true);closeModal();}
 const oldLocation=updateLocation;
 updateLocation=function(){oldLocation();if(floor&&!hunt&&region!=='ruins'){$('zoneTag').textContent=region.toUpperCase();$('locationName').textContent=REGIONS[region].name;$('mapCaption').textContent='地下 '+floor+' / '+REGIONS[region].floors+'階'+(variant?' 変異種':'');}};
@@ -131,7 +131,7 @@ function drawGacha(count){if(floor||![1,10].includes(count)||state.tickets<count
  }state.gachaLog=lastRewards.slice();save();renderModal();hud();tone(770,.2);}
 function bossRows(){return Object.entries(BOSSES).map(([id,b])=>{const n=state.bossKills[id]||0;return `<div class="card"><span class="tag">${REGIONS[b.region].name} / 討伐 ${n}回</span><h3>${b.name}</h3><p>${b.drops.map(d=>(state.bossCollection.includes(d)?'◆ ':'◇ ')+itemName(d)).join('<br>')}<br>通常：各5% / 変異種：各8%<br>固有装備なし ${state.bossDry[id]||0} / 30回。30回目は未入手を優先して1個確定。<br>毎回ガチャ券3枚。重複品は鉱石5・券2。</p>${btn('再戦','boss:'+id,!n)} ${btn('変異種に挑む','mutant:'+id,!n)}</div>`;}).join('');}
 function expansionHTML(kind){
- if(kind==='expeditions')return '<p class="lead">街の排水異常から始まる、新しい灯の探索。下り階段は各階の南東にあります。</p><div class="cards">'+Object.entries(REGIONS).filter(([id])=>id!=='tower').map(([id,r])=>`<div class="card"><span class="tag">推奨 Lv.${r.level}〜 / 全${r.floors}階</span><h3>${r.name}</h3><p>${id==='sewer'?'緑の筋の床は毒沼。4階の調合師を救出し、5階の三頭蛇から水源を取り戻そう。':id==='frost'?'青い筋の床は移動が遅くなる氷床。地下水路のボス撃破で解禁。':id==='shrine'?'周期的に敵が炎の予兆を放つ神殿。氷王撃破で解禁。':'最初の灯の物語。'}<br>到達：${state.regionBest[id]|| (id==='ruins'?state.best:0)}階</p>${btn(regionUnlocked(id)?'探索を始める':'前の地域のボス撃破で解禁',id==='ruins'?'enter:1':'region:'+id,!regionUnlocked(id),'primary')}</div>`).join('')+'</div>';
+ if(kind==='expeditions')return '<p class="lead">街の排水異常から始まる、新しい灯の探索。下り階段は各階の南東にあります。</p><div class="cards">'+Object.entries(REGIONS).filter(([id])=>id!=='tower').map(([id,r])=>`<div class="card"><span class="tag">推奨 Lv.${r.level}〜 / 全${r.floors}階</span><h3>${r.name}</h3><p>${id==='sewer'?'緑の筋の床は毒沼。4階の調合師を救出し、8階の三頭蛇から水源を取り戻そう。':id==='frost'?'青い筋の床は移動が遅くなる氷床。地下水路のボス撃破で解禁。':id==='shrine'?'周期的に敵が炎の予兆を放つ神殿。氷王撃破で解禁。':'最初の灯の物語。'}<br>到達：${state.regionBest[id]|| (id==='ruins'?state.best:0)}階</p>${btn(regionUnlocked(id)?'探索を始める':'前の地域のボス撃破で解禁',id==='ruins'?'enter:1':'region:'+id,!regionUnlocked(id),'primary')}</div>`).join('')+'</div>';
  if(kind==='bosses')return '<p class="lead">最初は各地域の最深部へ。一度倒すと、ここからボスに直接再戦できます。固有装備はガチャ・通常の戦利品からは出ません。</p><div class="cards">'+bossRows()+'</div>';
  if(kind==='gacha')return `<div class="notice"><b>所持ガチャ券 ${state.tickets}枚</b> / 累計 ${state.gachaTotal}回<br>通常敵12%（幸運装備で18%）、狩場の強敵1枚、ボス3枚、宝物庫2枚。<br>券以外は不要。所持金は消費しません。</div><div class="tabs">${btn('1回引く（券1枚）','gacha:1',state.tickets<1,'primary')}${btn('10回引く（券10枚）','gacha:10',state.tickets<10)}</div><p>通常確率 R70% / SR25% / SSR5%。SR以上なし10回目でSR以上、SSRなし50回目でSSR確定。<br>SR以上まで最大${10-state.gachaCount}回 / SSRまで最大${50-state.gachaDry}回。単発でも引き継ぎます。</p><div class="reward-list" aria-live="polite">${state.gachaLog.map(s=>'<p>'+s+'</p>').join('')}</div><details><summary>排出内容・重複時の扱い</summary><p>R：良品武器、銅の指輪・狩人の護符・疾風の足環・月読の首飾り、または薬セット。<br>SR：希少武器、毒蛇の指輪・見切りの護符。SSR：伝説武器、巡りの金環・賢者の印。戦利品武器の固有効果はランダム。<br>アクセサリー重複は灯鉱石3個。武器は個別性能で所持し、60個を超える分は売却。ボス専用品は対象外です。</p></details>`;
  if(kind==='codex')return '<p class="lead">討伐で記録される魔物図鑑。ボス装備は専用の再戦画面で入手先と確率を確認できます。</p>'+btn('ボスと固有装備','open:bosses')+ENEMY_NAMES.map((name,i)=>`<div class="list-row"><div><b>${state.book[i]?'◆':'◇'} ${name}</b><p>${state.book[i]?'討伐 '+state.book[i]+'体 / '+(['雫','翼','骨','核','糸','骨','残り火','鋼殻','汚泥','牙','牙','胞子','鋼殻','鱗','鱗','核','残り火','核','核','核','灯鉱石'][i])+'を入手。'+(i===20?'銀灯の大結晶を確定入手。':i>=14||i===3?'ボス券3枚・固有装備抽選。':'通常敵のガチャ券率12%。'):'未討伐。探索して記録を埋めよう。'}</p></div></div>`).join('')+'<div class="notice">発見 '+Object.keys(state.book).length+' / '+ENEMY_NAMES.length+'種 / 固有装備 '+state.bossCollection.length+' / '+Object.values(BOSSES).flatMap(b=>b.drops).length+'種</div><h3>収集報酬</h3>'+[5,10,17,20].map(n=>'<div class="list-row"><div><b>'+n+'種討伐の報酬</b><p>ガチャ券'+(n===5?3:n===10?10:20)+'枚・灯鉱石5個</p></div>'+btn(state.codexClaimed.includes(n)?'受取済み':'受け取る','codexClaim:'+n,state.codexClaimed.includes(n)||Object.keys(state.book).length<n)+'</div>').join('');
@@ -147,7 +147,7 @@ const oldRender=renderModal;
 renderModal=function(){oldRender();const names={commands:'魔法と道具',expeditions:'地域探索',bosses:'ボス再戦・固有装備',gacha:'灯籤の抽選所',codex:'魔物と装備の図鑑',alchemy:'帰ってきた調合師',regionStairs:'次の区画へ',regionComplete:'取り戻した灯',trader:'旅の行商人',altar:'呪われた祭壇'};const html=expansionHTML(modal);if(html!==null){$('modalEyebrow').textContent='THE EMBER BELOW · EXPANSION';$('modalTitle').textContent=names[modal];$('modalBody').innerHTML=html;}
  if(modal==='equipment'){$('modalBody').innerHTML='<div class="tabs">'+btn('アクセサリー '+state.accessories.length,'tab:accessories')+'</div>'+$('modalBody').innerHTML;if(currentTab==='accessories')$('modalBody').innerHTML+=accessoryRows();$('modalBody').innerHTML+='<div class="notice">発動中：'+(traitText([...traits()])||'なし')+'</div>';}
  if(modal==='gate')$('modalBody').innerHTML+= '<hr>'+btn('新しい地域を探索','open:expeditions')+' '+btn('ボス再戦','open:bosses');
- if(modal==='journal')$('modalBody').innerHTML+='<hr><div class="tabs">'+btn('魔物図鑑','open:codex')+btn('地域と進行','open:expeditions',!!floor)+btn('固有装備の入手先','open:bosses',!!floor)+'</div><p>追加地域：水路5階・氷鉱山4階・廃神殿4階。券は敵から入手し、街の抽選所で使用。アクセサリーは装備メニューへ。</p>';
+ if(modal==='journal')$('modalBody').innerHTML+='<hr><div class="tabs">'+btn('魔物図鑑','open:codex')+btn('地域と進行','open:expeditions',!!floor)+btn('固有装備の入手先','open:bosses',!!floor)+'</div>';
  if(modal==='teacher'){$('modalBody').innerHTML+='<hr><h3>魔法の派生（街で無料切替）</h3>'+SPELLS.filter(s=>state.spells.includes(s.id)&&['fire','ice','heal','nova'].includes(s.id)).map(s=>{const paths={fire:[['burst','爆裂：威力+25%・半径130・MP+3'],['pierce','貫通：直線340の敵を貫く']],ice:[['wide','広域：半径210・鈍足3秒'],['freeze','凍結：2秒停止（ボス0.6秒）']],heal:[['renew','再生：即時65%回復＋7秒で42回復'],['full','快癒：回復量+40%']],nova:[['wide','大環：半径300'],['swift','省力：威力-20%・消費MP-8']]}[s.id];return '<div class="card"><h3>'+s.name+'</h3><p>現在：'+(paths.find(p=>p[0]===state.spellPaths[s.id])?.[1]||'基本')+'</p>'+btn('基本','path:'+s.id+'-base',!floor&&!(state.spellPaths[s.id]&&state.spellPaths[s.id]!=='base')||!!floor)+paths.map(([id,label])=>btn(label,'path:'+s.id+'-'+id,!!floor||state.spellPaths[s.id]===id)).join('')+'</div>';}).join('');}
  if(modal==='forge'){$('modalBody').innerHTML+='<hr><h3>工房の発展</h3>'+(!state.forgeUnlocked?'<p>灯鉱石20・'+goldCost(150)+'Gを納品すると、ランダム武器の効果を付け替えられます。</p>'+btn('工房へ納品','forgeUnlock',state.materials.ore<20||state.gold<goldCost(150)):'<p>付け替えはランダム武器専用。鉱石3・'+goldCost(120)+'Gで、現在の効果を別の効果に変更します。ボス固有効果は保持されます。</p>'+btn('装備中の武器の効果を付け替え','reforge',!weapon().loot||state.gold<goldCost(120)||state.materials.ore<3));}
  if(modal==='commands'&&player.poison>0)$('modalBody').innerHTML+='<p>毒状態。回復薬で毒も解除できます。</p>';
