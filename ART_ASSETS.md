@@ -1,13 +1,14 @@
-# 白髪ロングの女勇者
+# 旅人(女) — 白髪ロングの旅装
 
-- 保存先：`docs/assets/heroine.webp`
-- 形式：透過WebP、512×1024、4列×8行。上4行が移動、下4行が攻撃・回避・被弾。
-- 生成方式：imagegenスキルの組み込み画像生成。生成後にゲーム用の寸法・WebPへ変換。元の茶髪の旅人は保持。
-- 外見による能力差なし。
+- 保存先：`docs/assets/heroine.webp`（512×1024、透過WebP、4列×8行）。
+- 男性と同じ素朴な旅人の雰囲気。白髪ロング、緑の布マント、生成りのスカーフ、茶の旅装、革のブーツ。鎧・剣・鞘は描かない。
+- 組み込み image_gen / imagegen スキルで生成。`hero.webp` を絵柄・頭身・衣装の参考に使用。透過セルの余白と縮尺だけをPillowで整え、足元を124pxに統一。
+- 1〜4行は正面・左・右・背面の歩行4コマ。5〜8行は同順の素手の予備動作・攻撃・回避・被弾。装備武器はゲーム側の既存描画で表示。
+- 選択表示と未命名時の名称は「旅人(男)」「旅人(女)」。保存内のID `traveler` / `heroine` は保持し、入力済みの名前も保持。
 
-## 生成プロンプト
+## 使用したプロンプト（要約）
 
-Asset type: production pixel art RPG character sprite atlas, transparent background. Create ONE precisely aligned sprite sheet with FOUR EQUAL COLUMNS and EIGHT EQUAL ROWS, 32 sprites total, portrait aspect ratio 1:2, ideally 1024x2048. Every invisible cell is exactly the same size, character standing feet at the same baseline, character entire body and sword entirely inside each cell, generous transparent padding between cells. Subject in EVERY cell: the SAME adult female heroic adventurer with very long white/silver hair reaching waist, small silver shoulder armor over a dark teal tunic, blue capelet, dark leggings and brown boots, steel sword. Readable face and silhouette. Elegant brave fantasy heroine, not sexualized. Match polished 32-bit era top-down dungeon RPG sprites, crisp nearest-neighbor pixel blocks, limited palette, 3/4 overhead view, no antialiased painting. Rows 1-4: walking cycle four frames each, directions in row order SOUTH facing viewer, WEST facing left, EAST facing right, NORTH back facing away. Columns idle/left-step/idle/right-step. Rows 5-8: same four directions in same order SOUTH/WEST/EAST/NORTH, columns sword windup / sword strike / dodge crouch / hurt recoil. Keep body sizes identical throughout all 32 cells, white hair consistent from all directions; back-facing sprite shows the long white hair. No labels, no text, no numbers, no frame borders, no grid lines, no scenery, no glow, no shadows outside sprite. True transparent background.
+Production pixel sprite atlas, transparent, 4 columns by 8 rows. Adult female traveler matching hero.webp in chibi proportions, pixel density, rustic mood and outfit. Long loose white/silver hair, muted forest-green cloth cloak, cream scarf, brown cloth tunic, leather belt and pouch, dark trousers, practical brown boots and wrist cuffs. No armor, swords, weapons or scabbards; both hands empty in all 32 cells. Rows 1–4 walking south/west/east/north, idle/left step/idle/right step. Rows 5–8 same directions with empty-handed windup/attack/dodge/hurt. Stable body size, complete bodies inside equal cells, generous transparent gutters, no text/grid/scenery.
 
 # 専用キャラクター画像の完成版
 

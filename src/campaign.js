@@ -1,6 +1,6 @@
 // Separate long-form adventure and legacy debug saves. Rules cannot change mid-run.
 const SAVE_SLOTS={debug:'ember-below-v1',adventure:'ember-below-adventure-v1'},LAST_SLOT='ember-below-active-slot';
-const MODE_NAMES={debug:'デバッグ',adventure:'冒険'},HERO_NAMES={traveler:'茶髪の旅人',heroine:'白髪ロングの女勇者'};
+const MODE_NAMES={debug:'デバッグ',adventure:'冒険'},HERO_NAMES={traveler:'旅人(男)',heroine:'旅人(女)'};
 let newGameDraft={mode:'adventure',hero:'traveler'},lastModeAutoSave=0;
 const campaignFresh=fresh;
 fresh=function(){return {...campaignFresh(),gameMode:'debug',hero:'traveler',playSeconds:0,journeyClaimed:[]};};
@@ -33,7 +33,7 @@ function formatPlayTime(seconds){const m=Math.floor((seconds||0)/60);return Math
 const campaignEnemy=enemy;
 enemy=function(type,x,y){const count=enemies.length;campaignEnemy(type,x,y);if(enemies.length<=count)return;const e=enemies.at(-1),factor=enemyFactor();e.hp=Math.round(e.hp*factor);e.maxHp=Math.round(e.maxHp*factor);e.atk=Math.round(e.atk*factor);};
 const campaignSprite=sprite;
-sprite=function(sheet,index,cols,rows,x,y,w,h,alpha=1){if(state?.hero==='heroine'&&['hero','combat'].includes(sheet)){let i=index+(sheet==='combat'?16:0);if(sheet==='combat'&&index===5){ctx.save();ctx.translate(x*2,0);ctx.scale(-1,1);campaignSprite('heroine',25,4,8,x,y,w,h,alpha);ctx.restore();return;}return campaignSprite('heroine',i,4,8,x,y,w,h,alpha);}return campaignSprite(sheet,index,cols,rows,x,y,w,h,alpha);};
+sprite=function(sheet,index,cols,rows,x,y,w,h,alpha=1){if(state?.hero==='heroine'&&['hero','combat'].includes(sheet)){const i=index+(sheet==='combat'?16:0);return campaignSprite('heroine',i,4,8,x,y,w,h,alpha);}return campaignSprite(sheet,index,cols,rows,x,y,w,h,alpha);};
 const JOURNEY_GOALS=[
  {id:'kills5',name:'最初の一歩',count:5,potions:2,tickets:0},{id:'kills20',name:'街の外に慣れる',count:20,potions:3,tickets:3},{id:'kills50',name:'武器を探す旅',count:50,potions:4,tickets:5},{id:'kills100',name:'百戦の旅人',count:100,potions:4,tickets:8},{id:'kills200',name:'迷宮の常連',count:200,potions:5,tickets:10},{id:'kills400',name:'熟練の探索者',count:400,potions:8,tickets:15}
 ];
@@ -42,7 +42,7 @@ function journeyHTML(){return '<p class="lead">'+MODE_NAMES[state.gameMode]+' ·
 const campaignUpdate=update;
 update=function(dt){state.playSeconds=(state.playSeconds||0)+dt;campaignUpdate(dt);if(clock-lastModeAutoSave>=30){save();lastModeAutoSave=clock;}};
 const campaignHud=hud;
-hud=function(){campaignHud();if($('heroName'))$('heroName').textContent=state.hero==='heroine'?'白銀の勇者':'旅人';if($('modeBadge'))$('modeBadge').textContent=MODE_NAMES[state.gameMode]+' MODE';};
+hud=function(){campaignHud();if($('heroName'))$('heroName').textContent=HERO_NAMES[state.hero]||HERO_NAMES.traveler;if($('modeBadge'))$('modeBadge').textContent=MODE_NAMES[state.gameMode]+' MODE';};
 const campaignRender=renderModal;
 renderModal=function(){campaignRender();if(modal==='newGame'){$('modalEyebrow').textContent='A NEW JOURNEY';$('modalTitle').textContent='はじめから';$('modalBody').innerHTML=newGameHTML();}if(modal==='journey'){$('modalEyebrow').textContent='ADVENTURE RECORD';$('modalTitle').textContent='冒険手帳';$('modalBody').innerHTML=journeyHTML();}
  if(modal==='journal'){$('modalBody').innerHTML=$('modalBody').innerHTML.replace('冒険（標準）','被ダメージ補正あり').replaceAll('冒険：被ダメージ','補正あり：被ダメージ');$('modalBody').innerHTML='<div class="notice">'+MODE_NAMES[state.gameMode]+'モード / '+HERO_NAMES[state.hero]+' / '+formatPlayTime(state.playSeconds)+'<br>次のレベルまで '+(needXP()-state.xp)+' EXP</div>'+$('modalBody').innerHTML+'<hr>'+btn('冒険手帳','open:journey',!!floor);}

@@ -32,7 +32,7 @@ ACCESSORIES.push(
  {id:'springCharm',name:'若葉の護符',tier:0,hp:12,traits:['leech']}
 );
 ENEMY_NAMES.push('銀灯スライム');
-function defaultHeroName(hero=state?.hero){return hero==='heroine'?'白銀の勇者':'旅人';}
+function defaultHeroName(hero=state?.hero){return HERO_NAMES[hero]||HERO_NAMES.traveler;}
 function cleanHeroName(value){return Array.from(String(value||'').normalize('NFC').replace(/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/g,'').trim()).slice(0,16).join('');}
 function heroDisplay(s=state){return cleanHeroName(s?.heroName)||defaultHeroName(s?.hero);}
 const discoveryFresh=fresh;

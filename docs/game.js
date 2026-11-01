@@ -578,7 +578,7 @@ drawTown=function(){ascentDrawTown();if(state.counts.sewerRescue){sprite('silver
 // CAMPAIGN START
 // Separate long-form adventure and legacy debug saves. Rules cannot change mid-run.
 const SAVE_SLOTS={debug:'ember-below-v1',adventure:'ember-below-adventure-v1'},LAST_SLOT='ember-below-active-slot';
-const MODE_NAMES={debug:'デバッグ',adventure:'冒険'},HERO_NAMES={traveler:'茶髪の旅人',heroine:'白髪ロングの女勇者'};
+const MODE_NAMES={debug:'デバッグ',adventure:'冒険'},HERO_NAMES={traveler:'旅人(男)',heroine:'旅人(女)'};
 let newGameDraft={mode:'adventure',hero:'traveler'},lastModeAutoSave=0;
 const campaignFresh=fresh;
 fresh=function(){return {...campaignFresh(),gameMode:'debug',hero:'traveler',playSeconds:0,journeyClaimed:[]};};
@@ -611,7 +611,7 @@ function formatPlayTime(seconds){const m=Math.floor((seconds||0)/60);return Math
 const campaignEnemy=enemy;
 enemy=function(type,x,y){const count=enemies.length;campaignEnemy(type,x,y);if(enemies.length<=count)return;const e=enemies.at(-1),factor=enemyFactor();e.hp=Math.round(e.hp*factor);e.maxHp=Math.round(e.maxHp*factor);e.atk=Math.round(e.atk*factor);};
 const campaignSprite=sprite;
-sprite=function(sheet,index,cols,rows,x,y,w,h,alpha=1){if(state?.hero==='heroine'&&['hero','combat'].includes(sheet)){let i=index+(sheet==='combat'?16:0);if(sheet==='combat'&&index===5){ctx.save();ctx.translate(x*2,0);ctx.scale(-1,1);campaignSprite('heroine',25,4,8,x,y,w,h,alpha);ctx.restore();return;}return campaignSprite('heroine',i,4,8,x,y,w,h,alpha);}return campaignSprite(sheet,index,cols,rows,x,y,w,h,alpha);};
+sprite=function(sheet,index,cols,rows,x,y,w,h,alpha=1){if(state?.hero==='heroine'&&['hero','combat'].includes(sheet)){const i=index+(sheet==='combat'?16:0);return campaignSprite('heroine',i,4,8,x,y,w,h,alpha);}return campaignSprite(sheet,index,cols,rows,x,y,w,h,alpha);};
 const JOURNEY_GOALS=[
  {id:'kills5',name:'最初の一歩',count:5,potions:2,tickets:0},{id:'kills20',name:'街の外に慣れる',count:20,potions:3,tickets:3},{id:'kills50',name:'武器を探す旅',count:50,potions:4,tickets:5},{id:'kills100',name:'百戦の旅人',count:100,potions:4,tickets:8},{id:'kills200',name:'迷宮の常連',count:200,potions:5,tickets:10},{id:'kills400',name:'熟練の探索者',count:400,potions:8,tickets:15}
 ];
@@ -620,7 +620,7 @@ function journeyHTML(){return '<p class="lead">'+MODE_NAMES[state.gameMode]+' ·
 const campaignUpdate=update;
 update=function(dt){state.playSeconds=(state.playSeconds||0)+dt;campaignUpdate(dt);if(clock-lastModeAutoSave>=30){save();lastModeAutoSave=clock;}};
 const campaignHud=hud;
-hud=function(){campaignHud();if($('heroName'))$('heroName').textContent=state.hero==='heroine'?'白銀の勇者':'旅人';if($('modeBadge'))$('modeBadge').textContent=MODE_NAMES[state.gameMode]+' MODE';};
+hud=function(){campaignHud();if($('heroName'))$('heroName').textContent=HERO_NAMES[state.hero]||HERO_NAMES.traveler;if($('modeBadge'))$('modeBadge').textContent=MODE_NAMES[state.gameMode]+' MODE';};
 const campaignRender=renderModal;
 renderModal=function(){campaignRender();if(modal==='newGame'){$('modalEyebrow').textContent='A NEW JOURNEY';$('modalTitle').textContent='はじめから';$('modalBody').innerHTML=newGameHTML();}if(modal==='journey'){$('modalEyebrow').textContent='ADVENTURE RECORD';$('modalTitle').textContent='冒険手帳';$('modalBody').innerHTML=journeyHTML();}
  if(modal==='journal'){$('modalBody').innerHTML=$('modalBody').innerHTML.replace('冒険（標準）','被ダメージ補正あり').replaceAll('冒険：被ダメージ','補正あり：被ダメージ');$('modalBody').innerHTML='<div class="notice">'+MODE_NAMES[state.gameMode]+'モード / '+HERO_NAMES[state.hero]+' / '+formatPlayTime(state.playSeconds)+'<br>次のレベルまで '+(needXP()-state.xp)+' EXP</div>'+$('modalBody').innerHTML+'<hr>'+btn('冒険手帳','open:journey',!!floor);}
@@ -674,7 +674,7 @@ ACCESSORIES.push(
  {id:'springCharm',name:'若葉の護符',tier:0,hp:12,traits:['leech']}
 );
 ENEMY_NAMES.push('銀灯スライム');
-function defaultHeroName(hero=state?.hero){return hero==='heroine'?'白銀の勇者':'旅人';}
+function defaultHeroName(hero=state?.hero){return HERO_NAMES[hero]||HERO_NAMES.traveler;}
 function cleanHeroName(value){return Array.from(String(value||'').normalize('NFC').replace(/[\u0000-\u001f\u007f-\u009f\u202a-\u202e\u2066-\u2069]/g,'').trim()).slice(0,16).join('');}
 function heroDisplay(s=state){return cleanHeroName(s?.heroName)||defaultHeroName(s?.hero);}
 const discoveryFresh=fresh;
@@ -841,7 +841,7 @@ let stickId=null;const stick=$('joystick');function stickMove(e){if(e.pointerId!
 stick.onpointerdown=e=>{e.preventDefault();stickId=e.pointerId;stick.setPointerCapture(e.pointerId);stickMove(e)};stick.onpointermove=stickMove;function release(){stickId=null;joystick.x=joystick.y=0;stick.firstElementChild.style.transform='';}stick.onpointerup=release;stick.onpointercancel=release;stick.onlostpointercapture=release;
 function start(continued){if(!loaded)return;if(continued)state=readSave()||fresh();else if(readSave()){state=readSave();}else state=fresh();enterTown(true);running=true;$('titleScreen').hidden=true;save();announce('灯守りの街');toast('街の施設から準備し、迷宮か狩場へ。操作は右上の「遊び方」で確認できます。');}
 setupCampaignTitle();
-Promise.all(['hero','combat','enemies','npcs','terrain','props','items','effects','title','newenemies','weapons-extra','heroine','sewer-cast','depths-cast','tower-cast','silver-cast','weapons-a','weapons-b'].map(name=>new Promise((resolve,reject)=>{const img=new Image();img.onload=resolve;img.onerror=()=>reject(name);img.src='assets/'+name+'.webp';art[name]=img}))).then(()=>{loaded=true;$('loading').hidden=true;resize();refreshCampaignTitle();}).catch(name=>{$('loading').innerHTML='画像を読み込めませんでした。<span>ページを再読み込みしてください：'+name+'</span>';$('titleScreen').hidden=true;});
+Promise.all(['hero','combat','enemies','npcs','terrain','props','items','effects','title','newenemies','weapons-extra','heroine','sewer-cast','depths-cast','tower-cast','silver-cast','weapons-a','weapons-b'].map(name=>new Promise((resolve,reject)=>{const img=new Image();img.onload=resolve;img.onerror=()=>reject(name);img.src='assets/'+name+'.webp'+(name==='heroine'?'?v=traveler-2':'');art[name]=img}))).then(()=>{loaded=true;$('loading').hidden=true;resize();refreshCampaignTitle();}).catch(name=>{$('loading').innerHTML='画像を読み込めませんでした。<span>ページを再読み込みしてください：'+name+'</span>';$('titleScreen').hidden=true;});
 requestAnimationFrame(frame);
 // Read-only diagnostic snapshot for headless logic tests.
 window.emberSnapshot=()=>({loaded,running,modal,floor,hunt:hunt&&{...hunt},player:player&&{x:Math.round(player.x),y:Math.round(player.y),hp:Math.ceil(player.hp),mp:Math.floor(player.mp)},state:state&&JSON.parse(JSON.stringify(state)),enemies:enemies.filter(e=>e.hp>0).length,enemyDetails:enemies.filter(e=>e.hp>0).map(e=>({type:e.type,x:e.x,y:e.y,hp:e.hp})),objects:objects.map(o=>({type:o.type,x:o.x,y:o.y,opened:o.opened})),stats:state&&stats()});
