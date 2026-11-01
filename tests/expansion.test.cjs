@@ -2,7 +2,7 @@ const boot=require('./game.test.cjs'),assert=require('node:assert/strict');
 (async()=>{
  const g=boot({version:1,lv:20,gold:5000,owned:['sword'],weapon:'sword',materials:{ore:80},spells:['fire','ice','heal','nova']});await g.ready();g.rng(()=>.99);
  const s=g.api.state();let p=g.api.player();
- assert.equal(g.api.catalogue().weapons.length,26);assert.equal(g.api.catalogue().accessories.length,16);assert.equal(Object.keys(g.api.catalogue().traits).length,15);assert.equal(s.tickets,0);assert.deepEqual(Array.from(s.accessorySlots),[null,null]);assert.equal(g.api.quests().length,18);
+ assert.equal(g.api.catalogue().weapons.length,32);assert.equal(g.api.catalogue().accessories.length,20);assert.equal(Object.keys(g.api.catalogue().traits).length,15);assert.equal(s.tickets,0);assert.deepEqual(Array.from(s.accessorySlots),[null,null]);assert.equal(g.api.quests().length,18);
  // Six new creatures use real attacks, give materials, quest counts, and ticket rolls.
  g.click('menuBtn');g.act('region:sewer');assert.equal(g.snap().floor,1);assert.equal(g.snap().enemies,13);
  g.api.clear();for(let type=8;type<=13;type++)g.api.enemy(type,6,6);

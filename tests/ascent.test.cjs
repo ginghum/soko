@@ -1,7 +1,7 @@
 const boot=require('./game.test.cjs'),assert=require('node:assert/strict');
 (async()=>{
  const g=boot({version:1,lv:30,gold:3000,cleared:true,counts:{guardian:1},materials:{ore:50}});await g.ready();g.rng(()=>.99);const s=g.api.state();let p=g.api.player();
- assert.equal(s.bossKills.guardian,1,'old story clear unlocks boss replay');assert.equal(g.api.catalogue().skills.length,18);assert.equal(g.api.catalogue().armors.length,8);assert.equal(g.api.catalogue().weapons.length,26);assert.equal(g.api.catalogue().accessories.length,16);
+ assert.equal(s.bossKills.guardian,1,'old story clear unlocks boss replay');assert.equal(g.api.catalogue().skills.length,18);assert.equal(g.api.catalogue().armors.length,11);assert.equal(g.api.catalogue().weapons.length,32);assert.equal(g.api.catalogue().accessories.length,20);
  g.click('menuBtn');g.act('skill:bladeFinish');assert.equal(s.skills.bladeFinish,undefined,'deep skill requires predecessor');g.act('skill:bladeEdge');g.act('skill:bladeEdge');g.act('skill:bladeEdge');assert.equal(s.skills.bladeEdge,2);g.act('skill:bladeGuard');assert.equal(g.api.skillPoints(),26);g.act('respec');assert.equal(g.api.skillPoints(),29);
  // Tower progress cannot skip floors or pay the same first-clear reward twice.
  g.act('tower:26');assert.equal(g.api.tower(),null);g.act('tower:1');g.act('towerNext');assert.equal(g.api.tower().floor,1);
