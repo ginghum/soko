@@ -9,9 +9,10 @@ from PIL import Image
 
 root = Path(__file__).resolve().parent.parent
 sources = sys.argv[1:]
+ticket = bool(sources and sources[0] == '--ticket')
 weapons = bool(sources and sources[0] == '--weapons')
-if weapons: sources = sources[1:]
-names = ['weapons-a', 'weapons-b'] if weapons else ['sewer-cast', 'depths-cast', 'tower-cast', 'silver-cast']
+if weapons or ticket: sources = sources[1:]
+names = ['ticket-mimic'] if ticket else ['weapons-a', 'weapons-b'] if weapons else ['sewer-cast', 'depths-cast', 'tower-cast', 'silver-cast']
 assert len(sources) == len(names), 'Provide two weapon atlases with --weapons, or four character atlases'
 for name, source in zip(names, sources):
     image = Image.open(source).convert('RGBA')

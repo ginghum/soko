@@ -52,3 +52,11 @@ Production pixel sprite atlas, transparent, 4 columns by 8 rows. Adult female tr
 | weapons-b | 4 | 嵐呼び（雷叉と青晶）／紅晶（紅玉と黒鉄）／暁鐘（鐘型の槌と舌）／月霜（月形の大剣と霜） |
 
 生成後は `python scripts/prepare-character-atlases.py --weapons input-a.png input-b.png` で各セルの透過余白とサイズをそろえる。
+
+# 灯籤ミミック
+
+組み込み image_gen で生成。`docs/assets/ticket-mimic.webp`、768×768、4列×4行。行は南・西・東・北、列は待機・予兆・攻撃・被弾。木箱、真鍮の金具と足、琥珀の目、青緑の帯、背中に広げた無地の抽選券、小さな鈴で通常の宝箱と区別。大きな個体も同じ意匠を拡大して使用。
+
+Prompt: Production pixel-art top-down fantasy RPG monster atlas, one square transparent image, exact four columns by four rows. Same original small lottery-ticket mimic chest in every cell: walnut wood, brass corner fittings and feet, glowing amber eyes, small toothy mouth, turquoise sash, a fan of blank cream-and-gold raffle tickets and a brass bell. Rows south/west/east/north, columns idle/windup/lunge/hurt. Crisp polished32-bit dark fantasy pixel art, overhead three-quarter view, wood/gold/teal palette, consistent size and baseline, generous transparent margins. No text, labels, grid, scenery or floor shadows. True transparency.
+
+ゲーム用余白の正規化は `scripts/prepare-character-atlases.py --ticket input.png`。
