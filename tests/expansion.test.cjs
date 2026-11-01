@@ -2,7 +2,7 @@ const boot=require('./game.test.cjs'),assert=require('node:assert/strict');
 (async()=>{
  const g=boot({version:1,lv:20,gold:5000,owned:['sword'],weapon:'sword',materials:{ore:80},spells:['fire','ice','heal','nova']});await g.ready();g.rng(()=>.99);
  const s=g.api.state();let p=g.api.player();
- assert.equal(g.api.catalogue().weapons.length,19);assert.equal(g.api.catalogue().accessories.length,12);assert.equal(Object.keys(g.api.catalogue().traits).length,15);assert.equal(s.tickets,0);assert.deepEqual(Array.from(s.accessorySlots),[null,null]);assert.equal(g.api.quests().length,18);
+ assert.equal(g.api.catalogue().weapons.length,26);assert.equal(g.api.catalogue().accessories.length,16);assert.equal(Object.keys(g.api.catalogue().traits).length,15);assert.equal(s.tickets,0);assert.deepEqual(Array.from(s.accessorySlots),[null,null]);assert.equal(g.api.quests().length,18);
  // Six new creatures use real attacks, give materials, quest counts, and ticket rolls.
  g.click('menuBtn');g.act('region:sewer');assert.equal(g.snap().floor,1);assert.equal(g.snap().enemies,13);
  g.api.clear();for(let type=8;type<=13;type++)g.api.enemy(type,6,6);
@@ -16,7 +16,7 @@ const boot=require('./game.test.cjs'),assert=require('node:assert/strict');
  g.api.enterRegion('sewer',5);const hydra=g.api.enemies().find(e=>e.type===14);g.rng(()=>.99);g.api.hurtEnemy(hydra,100000);assert.equal(s.bossKills.hydra,1);assert.equal(s.bossCollection.length,0,'rare drop can miss');assert.equal(s.tickets,12,'rescue and boss each give 3 tickets');
  g.act('town');g.act('boss:hydra');assert.equal(g.snap().enemies,1,'direct boss replay');const boss=g.api.enemies()[0];s.bossDry.hydra=29;g.rng(()=>.99);g.api.hurtEnemy(boss,100000);assert.equal(s.bossCollection.length,1,'30th dry kill guarantees unique');assert.equal(s.bossDry.hydra,0);
  g.act('town');g.act('mutant:hydra');assert.ok(g.api.enemies()[0].maxHp>1150);g.rng(()=>0);g.api.hurtEnemy(g.api.enemies()[0],100000);assert.equal(s.bossCollection.length,2,'missing unique is prioritized');
- g.act('town');g.act('region:frost');assert.equal(g.snap().floor,1);g.api.enterRegion('frost',4);g.api.hurtEnemy(g.api.enemies().find(e=>e.type===15),100000);g.act('town');g.act('region:shrine');g.api.enterRegion('shrine',4);g.api.hurtEnemy(g.api.enemies().find(e=>e.type===16),100000);assert.ok(s.bossKills.frost&&s.bossKills.phoenix,'region unlock chain');
+ g.act('town');g.act('region:frost');assert.equal(g.snap().floor,1);g.api.enterRegion('frost',4);g.api.hurtEnemy(g.api.enemies().find(e=>e.type===15),100000);g.act('town');g.act('region:shrine');g.api.enterRegion('shrine',4);g.api.hurtEnemy(g.api.enemies().find(e=>e.type===16),100000);g.api.hurtEnemy(g.api.enemies().find(e=>e.type===16),100000);assert.ok(s.bossKills.frost&&s.bossKills.phoenix,'region unlock chain');
  // Boss-exclusive gear cannot be purchased or rolled as ordinary weapons.
  g.act('town');const gold=s.gold;g.act('buyweapon:sunblade');assert.equal(s.gold,gold);assert.ok(!s.owned.includes('sunblade'));
  for(let i=0;i<50;i++)assert.ok(!g.api.randomDrop(5,3).base.match(/sunblade|serpentfang|frostlance|ashstaff/));

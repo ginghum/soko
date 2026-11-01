@@ -23,3 +23,8 @@
 .reward-list p{padding:7px 0;border-bottom:1px solid var(--line);color:#e2cca4}
 #modal hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 @media(max-width:650px){#townNav{min-height:43px;padding:5px 8px;justify-content:flex-start}#townNav button{min-height:32px;padding:7px 10px}.reward-list{font-size:12px}#modal .loot-actions button{min-height:38px}}
+#modal textarea{display:block;width:100%;padding:12px;background:#0e1c23;color:#e5e6dc;border:1px solid #657e83;border-radius:5px;resize:vertical;font:12px/1.6 monospace;margin:10px 0}
+#modal select,#modal input[type=file]{max-width:100%;min-height:38px;background:#13272f;color:#e5e6dc;border:1px solid #567078;border-radius:4px;padding:7px;font:inherit}
+.inventory-filters{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}.inventory-filters label{display:flex;flex-direction:column;gap:5px;color:#b4c6c4;font-size:11px;flex:1;min-width:110px}.set-active{color:#e7cf8d}
+#backupError{color:#edc28a;line-height:1.7}#skillBalance{color:#a9d5ca}#modal .loot-actions{flex-wrap:wrap;max-width:165px}
+@media(max-width:650px){#modal .loot-actions{max-width:100px;min-width:80px}#modal textarea{font-size:11px}#modal select{font-size:12px}}
